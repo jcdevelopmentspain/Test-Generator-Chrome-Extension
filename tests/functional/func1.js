@@ -1,0 +1,1 @@
+define(function (require) {var registerSuite = require('intern!object');var assert = require('intern/chai!assert');registerSuite({name: 'index','greeting form': function () {return this.remote.get(require.toUrl('https://twitter.com/')).findById('signin-password').click().end().sleep(500).findById('signin-password').type('zxchvjz').end().sleep(500).end()}});});

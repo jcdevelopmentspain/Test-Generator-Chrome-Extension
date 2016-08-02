@@ -1,0 +1,178 @@
+<html>
+	<head>
+	  <link rel="stylesheet" href="/css/bootstrap.min.css">
+	  <script  type="text/javascript" src="/js/index.js"></script>
+	  <script  type="text/javascript" src="/js/libraries/mustache.js"></script>
+	  <script rel="stylesheet" src="/js/libraries/jquery-1.11.2.min.js"></script>
+	  <script  type="text/javascript" src="/js/libraries/FileSaver.js"></script>
+	  <script  type="text/javascript" src="/js/libraries/beautify.js"></script>
+	  <script rel="stylesheet" src="/js/libraries/bootstrap.min.js"></script>
+	 
+	  <!--<script  type="text/javascript" src="/js/Blob.js"></script>-->
+
+	  
+	  <link rel="stylesheet" href="/css/style.css">
+	 </head>
+	 <body>
+	 	<div class="row">
+		 	<div class="col-xs-2 col-md-1">
+			  	<div class="row">
+			  		<button id="linkAcciones" class="col-xs-12 menuLateral btn btn-default" > 
+			  			<span class="glyphicon glyphicon-hand-up" aria-hidden="true"></span> Actions 
+			  		</button>
+			  		<button id="linkGenerar" class="col-xs-12 menuLateral btn btn-default" > 
+			  			<span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> Code 
+			  		</button>
+			  	</div>
+
+		  	</div>	
+		  	<div id="circleStart" class=" col-xs-10 col-md-11 colGrid circleStart" >
+			</div>
+		 	<div id="framePrincipal" class="col-xs-10 col-md-11 framePrincipal ">
+
+
+					
+					 <div id="acciones">
+					 	<div class="col-offset-1 col-xs-3 col-md-4 colGrid" >
+					 		<span class="glyphicon glyphicon glyphicon-tags icon category">
+					 			<!-- <img title="the Intern" src="images/icons/fingerprint16.png" > -->
+					 			<!-- &nbsp;&nbsp;&nbsp; -->
+					 			<a>Clicked Elements</a>
+					 		</span>
+					 		<select id="clickedElements" multiple class="form-control select">
+							</select>
+							<button id="deleteClickedElements" title="Delete element" type="button" class="hidden-xs btn btn-default glyphicon glyphicon-trash button apiButton"> Delete</button>
+							<button id="deleteClickedElements" title="Delete element" type="button" class="visible-xs actionsButton btn btn-default glyphicon glyphicon-trash button "> </button>
+
+					 	</div>
+					<div class="col-xs-3 col-md-4 colGrid " > 
+						<span class="glyphicon glyphicon-book icon category">
+								<a >Api Interactions</a>
+					 	</span>
+						<select id="apiActions" multiple class="form-control marginApi ">
+							<ul class="methods">
+								<option id="op1" data-icon="glyphicon-heart" data-member-id="module:leadfoot/Element#clearValue" class="">
+									<a>acceptAlert</a>
+								</option>
+
+								<option data-icon="glyphicon-heart" data-member-id="module:leadfoot/Element#clearValue" class="">
+									<a>alertTextEqualTo</a>
+								</option>
+
+
+								<option data-icon="glyphicon-heart" data-member-id="module:leadfoot/Element#clearValue" class="">
+									<a>clearValue</a>
+								</option>
+
+								<option data-icon="glyphicon-heart" data-member-id="module:leadfoot/Element#clearValue" class="">
+									<a>isEnabled</a>
+								</option>
+
+								<option data-icon="glyphicon-heart" data-member-id="module:leadfoot/Element#clearValue" class="">
+									<a>isSelected</a>
+								</option>
+
+								<option data-icon="glyphicon-heart" data-member-id="module:leadfoot/Element#clearValue" class="">
+									<a>textEqualTo</a>
+								</option>
+
+								<option data-icon="glyphicon-heart" data-member-id="module:leadfoot/Element#clearValue" class="">
+									<a>valueEqualTo</a>
+								</option>
+
+
+								<option id="op2" data-icon="glyphicon-heart" data-member-id="module:leadfoot/Element#clearValue" class="">
+									<a>click</a>
+								</option>
+
+								<option data-member-id="module:leadfoot/Element#type" class="">
+									<a>type</a>
+								</option>
+						</ul>						
+						</select>
+
+						<textarea id="params" class="form-control" placeholder="Parametros"></textarea>
+						<button id="addToAction" title="Add to test actions" type="button" class="hidden-xs btn btn-default glyphicon glyphicon-send button apiButton"> Add to actions</button>
+						<button id="addToAction" title="Add to test actions" type="button" class="visible-xs actionsButton btn btn-default glyphicon glyphicon-send button apiButton"> </button>
+
+
+					</div>
+					<div id="myid" class="col-xs-3 col-md-3 colGrid" >
+
+						<span class="glyphicon glyphicon-console icon category">
+					 			<a>Defined actions</a>
+					 		</span>
+						<select id="actionsChoosed" multiple class="form-control select">
+						</select>
+						<button id="addButton" title="Add actions to test" type="button" class="hidden-xs btn btn-default glyphicon glyphicon-send button actionsButton "> Add to test</button>
+						<button id="addButton" title="Add actions to test" type="button" class="visible-xs actionsButton btn btn-default glyphicon glyphicon-send button "></button>
+						<button id="deleteButton" title="Delete Action" type="button" class="hidden-xs btn btn-default glyphicon glyphicon-trash button actionsButton"> Delete</button>
+						<button id="deleteButton" title="Delete Action" type="button" class="visible-xs actionsButton btn btn-default glyphicon glyphicon-trash button "> </button>
+						
+					</div>
+
+				</div>	
+
+				<div id="codigo">
+
+					<div class="col-xs-7 col-md-8 colGrid" >
+
+
+						<span class="glyphicon glyphicon-share-alt icon category">	 			
+					 			<a>URL to test:  </a>
+					 	</span>
+					 	<span id="siteURL">	 			
+					 	</span>
+						<div id="loader-wrapper">
+						    <div id="loader" class=""></div>
+						</div>
+				 		<textarea id="codeContainer" class="codeContainer form-control" placeholder="Test Code.." ></textarea>
+				 	</div>
+					<div class="col-xs-3 col-md-3 colGrid" >
+
+						<span class="glyphicon glyphicon-barcode icon category">	 			
+					 			<a>File Name</a>
+					 	</span>
+					 	<div class="input-group inputFileName">
+						  <input id="fileName" type="text" class="form-control "> 
+						  <span class="input-group-addon">.js</span>
+						</div>
+
+						<span class="glyphicon glyphicon-barcode icon category">	 			
+					 			<a>Framework</a>
+					 		</span>
+
+						<div class="radio">
+						  <label>
+						    <input type="radio" name="FWork" id="Intern" value="opcion_1" checked>
+						    	<img title="the Intern" src="images/theInternLogo.png" >
+						  </label>
+						</div>
+						<div class="radio">
+						  <label>
+						    <input type="radio" class="radio disabled" name="FWork" id="Jasmine" value="opcion_2" disabled>
+						    	<img title="Jasmine" src="images/jasmine.png" >
+						  </label>
+						</div>
+						<div class="radio">
+						  <label>
+						    <input type="radio"  class="radio disabled" name="FWork" id="NightWatch" value="opcion_3" disabled>
+						    	<img title="NightWatch" src="images/nightWatch.png" >
+						  </label>
+						</div>
+
+						<button id="buttonExport" class="col-xs-6 btn btn-default"> 
+			  					<span id="textButtonExport"class="glyphicon glyphicon-floppy-saved" aria-hidden="true"></span>  Download
+			  			</button>
+
+
+
+					</div>
+				</div>	
+			</div>	
+		</div>	
+	</body>
+</html>	
+
+
+
