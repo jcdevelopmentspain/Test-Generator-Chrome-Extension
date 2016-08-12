@@ -6,7 +6,7 @@
 Creates functional tests from your browser for Nightwatch Jasmine or Intern
 
 ## Install
- Add the [extension]("https://chrome.google.com/webstore/detail/test-recorder-nightwatch/kfdbnocoodopacnbliknkiakhaepcoik?hl=es") to your Chrome Browser.
+ Add the [extension](https://chrome.google.com/webstore/detail/test-recorder-nightwatch/kfdbnocoodopacnbliknkiakhaepcoik?hl=es) to your Chrome Browser.
 
 ## Running
 
