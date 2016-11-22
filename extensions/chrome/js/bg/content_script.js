@@ -2,40 +2,55 @@
 var body = document.getElementsByTagName("BODY")[0];
 var URL = document.location.href;
 
-//Binds sendID function to click event.
+//Binds sendChild function to click event.
 function attach( parent ){
-	for( var i=0; i < parent.children.length ; i++ ){
-		var child = parent.children[i];
-		if( child.id ){	
-			$(child).bind('click',{ value: child.id },sendID);
-		} 		
-		attach( child );
-	}
+	$(parent).on('click', { value: parent },  sendChild);
 } 
 
 //Sends the id when the user selects an element and avoids navigation.
-var sendID = function( e ){
-	chrome.runtime.sendMessage(e.data.value);
+var sendChild = function( e ){
+
+	if (e.target.id){
+		chrome.runtime.sendMessage(e.target.id);
+	} else {
+		var index = selectCssElement ( e.target , e.target.className );
+		var elementProperties = {
+			"index" : index,
+			"className": e.target.className
+		}
+		chrome.runtime.sendMessage(elementProperties);
+
+	}
+	
 	//e.cancelBubble = true;
 	e.stopPropagation();
 	e.preventDefault();
 }
-
-//When user closes the extension, click events works as always.
-function unbindClick ( parent ){
-
-	for (var i=0; i < parent.children.length; i++) {
-		var child = parent.children[i];
-		$(child).unbind('click',sendID);
-		unbindClick(child);
+//Select the proper html-element if there is more than one with the same class name
+function selectCssElement ( element, className ){
+	var siblings = document.getElementsByClassName(className);
+	if (typeof siblings == "object"){
+		var match = false;
+		var i = 0;
+		while( match == false ){
+			element === siblings[i] ? match = true : i++ ;
+		}
+		return i;
 	}
 }
 
+
+//When user closes the extension, click events works as always.
+function unbindClick ( parent ){
+	$(parent).off('click',sendChild)
+}
 
 
 function sendURL(URL){
 	chrome.runtime.sendMessage(URL);
 }
+
+
 
 //Checks every 500ms if Dev Tools is open for attach the events to the DOM.
 var isAttached = false;

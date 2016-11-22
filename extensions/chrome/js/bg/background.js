@@ -5,10 +5,12 @@ var URL;
 // current tab
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log('incoming message from injected script');
-  console.log("mensaje: "+request);
+  console.log("mensaje: " + request);
   try{
-    if (request.indexOf ("http") > -1){
+    if ( typeof request != "object" ){  
+      if (request.indexOf ("http") > -1){
       URL = request;
+      }
     }
   }catch (e){}
   //If the extension is asking for the URL
