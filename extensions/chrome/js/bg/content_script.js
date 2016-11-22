@@ -12,7 +12,7 @@ var sendChild = function( e ){
 
 	if (e.target.id){
 		chrome.runtime.sendMessage(e.target.id);
-	} else {
+	} else if (e.target.className){
 		var index = selectCssElement ( e.target , e.target.className );
 		var elementProperties = {
 			"index" : index,
