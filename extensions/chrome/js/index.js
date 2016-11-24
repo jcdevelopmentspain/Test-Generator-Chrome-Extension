@@ -23,7 +23,7 @@ var backgroundPageConnection = chrome.runtime.connect({
 
 //Post info in the bckground.js to identify it
 backgroundPageConnection.postMessage({
-	name: 'init',
+	name: 'extension',
 	tabId: 'currentWindow'
 	//chrome.devtools.inspectedWindow.tabId
 });
