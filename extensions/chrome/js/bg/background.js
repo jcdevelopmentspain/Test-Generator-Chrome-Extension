@@ -30,7 +30,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
         }
       } else if(sender.url){
         //Report to the content script that it should attach the HTML document events
-        contentScriptPort.postMessage({question: "prueba"});
+        if (request == "attachBody"){
+          connections[contentScriptPort].postMessage({question: "attach"});
+        }else{
+          connections[contentScriptPort].postMessage({question: "detach"});          
+        }
       }else{
         console.log("sender.tab not defined.");
       }
@@ -43,17 +47,12 @@ chrome.runtime.onConnect.addListener(function(port) {
 
   // Listen to messages sent from the DevTools page
   port.onMessage.addListener(function(request) {
-    console.log('Incoming message from dev tools page');
-    if (request.joke == "Knock knock"){
-      contentScriptPort = port;
-      port.postMessage({question: "Who's there?"});
+    if (request.id == "Content Script connection attemp"){
+      connections[contentScriptPort] = port;
     }
-    else if (request.answer == "Madame")
-      port.postMessage({question: "Madame who?"});
-    else if (request.answer == "Madame... Bovary")
-      port.postMessage({question: "I don't get it."});
     // Register initial connection
     if (request.name == 'extension') {
+      console.log('Incoming message from dev tools page');    
       connections[request.tabId] = port;
 
       port.onDisconnect.addListener(function() {

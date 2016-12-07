@@ -1,11 +1,12 @@
-
-var body = document.getElementsByTagName("BODY")[0];
+//const
+var BODY = document.getElementsByTagName("BODY")[0];
 var URL = document.location.href;
 
 //Binds sendChild function to click event.
 function attach( parent ){
 	$(parent).on('click', { value: parent },  sendChild);
-} 
+	sendURL();
+}
 
 //Sends the id when the user selects an element and avoids navigation.
 var sendChild = function( e ){
@@ -21,8 +22,7 @@ var sendChild = function( e ){
 		chrome.runtime.sendMessage(elementProperties);
 
 	}
-	
-	//e.cancelBubble = true;
+
 	e.stopPropagation();
 	e.preventDefault();
 }
@@ -41,7 +41,7 @@ function selectCssElement ( element, className ){
 
 
 //When user closes the extension, click events works as always.
-function unbindClick ( parent ){
+function detach ( parent ){
 	$(parent).off('click',sendChild)
 }
 
@@ -51,36 +51,14 @@ function sendURL(URL){
 }
 
 
-
-//Checks every 500ms if Dev Tools is open for attach the events to the DOM.
-var isAttached = false;
-var checkDevTool = setInterval (function(){
-		var threshold = 160;
-		var heightThreshold = window.outerHeight - window.innerHeight > threshold;
-		//The user has opened the devTools
-		if (heightThreshold && !isAttached ){
-			attach( body );
-			sendURL(URL);
-			isAttached = true;
-			
-		}else if ( !heightThreshold && isAttached) {
-				//We have to remove attached events 
-				unbindClick(body);
-				isAttached = false;
-			}
-},500);
-
-var port = chrome.runtime.connect({name: "knockknock"});
-port.postMessage({joke: "Knock knock"});
+var port = chrome.runtime.connect({name: "Background connection"});
+port.postMessage({id: "Content Script connection attemp"});
 port.onMessage.addListener(function(msg) {
-  if (msg.question == "Who's there?")
-    port.postMessage({answer: "Madame"});
-  else if (msg.question == "Madame who?")
-    port.postMessage({answer: "Madame... Bovary"});
-	   else if(msg.question == "prueba"){
-	     port.postMessage({answer: "Madame"});
-		 console.log("hola");
-		 alert();
-	   }
-
+	if(msg.question == "attach" || msg.question == "detach"){
+		if(msg.question == "attach"){
+			attach(BODY);
+		}else{
+			detach(BODY);
+		}
+	}
 });
