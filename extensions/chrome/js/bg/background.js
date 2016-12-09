@@ -1,42 +1,27 @@
 var connections = {};
-var URL;
 var contentScriptPort;
+var URL;
+
+
 
 // Receive message from content script and relay to the devTools page for the
 // current tab
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   console.log('incoming message ');
   console.log("message: " + request);
-  
   try{
-    if ( typeof request != "object" ){  
-      if (request.indexOf ("http") > -1){
-      URL = request;
-      }
-    }
+    if ( isURL( request ) ){ URL = request;}
   }catch (e){}
   //If the extension is asking for the URL
-  if (request.greeting == "urlRequest"){
-    sendResponse({farewell: URL});
-  } else {
-      // Messages from content scripts should have sender.tab set
-      if (sender.tab) {
-        var tabId = sender.tab.id;
-        if (tabId = 'currentWindow' /*in connections*/) {
-          connections[tabId].postMessage(request);
-        } else {
-          console.log("Tab not found in connection list.");
-        }
-      } else if(sender.url){
-        //Report to the content script that it should attach the HTML document events
-        if (request == "attachBody"){
-          connections[contentScriptPort].postMessage({question: "attach"});
-        }else{
-          connections[contentScriptPort].postMessage({question: "detach"});          
-        }
-      }else{
-        console.log("sender.tab not defined.");
-      }
+  if ( isRequestURL( request ) ){ sendResponse({farewell: URL});}
+  else {
+      // Messages from content scripts should have sender.tab set and redirect de id value to the extension
+	  // Messages from devTools.js should be to attach or detach the document
+		var tabIdPort = isContentScript( sender );
+		var devToolPort = isDevTool( sender , request );
+
+		var dest = tabIdPort || devToolPort ;
+		dest.postMessage( request ); 
   }
   
   return true;
@@ -57,3 +42,20 @@ chrome.runtime.onConnect.addListener(function(port) {
   });
 
 });
+
+//UTIL
+function isURL ( req ){
+	return (typeof req != "object") && (req.indexOf ("http") > -1)
+}
+
+function isRequestURL ( req ){
+	return req.greeting == "urlRequest";
+}
+
+function isContentScript ( sender ){
+	return sender.tab && (sender.tab.id = 'currentWindow' ) ? connections[sender.tab.id] : false ;
+} 
+
+function isDevTool ( sender , req ){
+	return (sender.url && (req == "attach" || req == "detach")) ? connections[contentScriptPort] : false ;
+}

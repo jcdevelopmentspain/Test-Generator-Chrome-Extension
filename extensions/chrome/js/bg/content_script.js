@@ -6,8 +6,8 @@ var URL = document.location.href;
 var port = chrome.runtime.connect({name: "Background connection"});
 port.postMessage({id: "content script"});
 port.onMessage.addListener(function(msg) {
-	if(msg.question == "attach" || msg.question == "detach"){
-		if(msg.question == "attach"){
+	if(msg == "attach" || msg == "detach"){
+		if(msg == "attach"){
 			attach(BODY);
 		}else{
 			detach(BODY);
