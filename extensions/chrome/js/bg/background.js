@@ -5,8 +5,8 @@ var contentScriptPort;
 // Receive message from content script and relay to the devTools page for the
 // current tab
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-  console.log('incoming message from injected script');
-  console.log("mensaje: " + request);
+  console.log('incoming message ');
+  console.log("message: " + request);
   
   try{
     if ( typeof request != "object" ){  
@@ -20,7 +20,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     sendResponse({farewell: URL});
   } else {
       // Messages from content scripts should have sender.tab set
-
       if (sender.tab) {
         var tabId = sender.tab.id;
         if (tabId = 'currentWindow' /*in connections*/) {
@@ -45,22 +44,16 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 chrome.runtime.onConnect.addListener(function(port) {
 
-  // Listen to messages sent from the DevTools page
+  // Listen to messages sent from the DevTools page & Content Script
   port.onMessage.addListener(function(request) {
-    if (request.id == "Content Script connection attemp"){
-      connections[contentScriptPort] = port;
+    
+    //request.id == "content scriptt && request.name == "extension"
+    //ToDo onDisconnect ()
+    if ( request.id || request.name ){
+      var connection = request.name ? request.tabId : contentScriptPort ;
+      return connections[connection] = port ;
     }
-    // Register initial connection
-    if (request.name == 'extension') {
-      console.log('Incoming message from dev tools page');    
-      connections[request.tabId] = port;
 
-      port.onDisconnect.addListener(function() {
-        delete connections[request.tabId];
-      });
-
-      return;
-    }
   });
 
 });
