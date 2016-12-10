@@ -7,7 +7,6 @@ elementsCollection = elements that the user selects and are passed from the cont
 
 */
 
-
 var actionsCollection = [];
 var elementsCollection = [];
 var cssElementsMap = new Map();
@@ -401,6 +400,10 @@ function parseIntern() {
 }
 function parseActionIntern(actionId, elementId, parameters, buffer) {
 	
+	var cssAction = (elementId.indexOf ("[") && elementId.indexOf ("]")) != -1 ;
+	var findMode = cssAction ? "findByClassName" : "findById" ;
+
+
 	switch (actionId) {
 
 		case "acceptAlert":
@@ -408,15 +411,15 @@ function parseActionIntern(actionId, elementId, parameters, buffer) {
 			break;
 
 		case "equals":
-			buffer.push(".findById('" + elementId + "').getVisibleText().equals('" + parameters + "').end()");
+			buffer.push("."+ findMode + "('" + elementId + "').getVisibleText().equals('" + parameters + "').end()");
 			break;
 
 		case "type":
-			buffer.push(".findById('" + elementId + "').type('" + parameters + "').end()");
+			buffer.push("."+ findMode + "('" + elementId + "').type('" + parameters + "').end()");
 			break;
 
 		case "click":
-			buffer.push(".findById('" + elementId + "').click().end()");
+			buffer.push("."+ findMode + "('" + elementId + "').click().end()");
 			break;
 
 		case "alertTextEqualTo":
@@ -424,23 +427,23 @@ function parseActionIntern(actionId, elementId, parameters, buffer) {
 			break;
 
 		case "isEnabled":
-			buffer.push(".findById('" + elementId + "').isEnabled().then(function(enable){assert.equal(enable , " + parameters + ")}).end()");
+			buffer.push("."+ findMode + "('" + elementId + "').isEnabled().then(function(enable){assert.equal(enable , " + parameters + ")}).end()");
 			break;
 
 		case "isSelected":
-			buffer.push(".findById('" + elementId + "').isSelected().then(function(selected){assert.equal(selected , " + parameters + ")}).end()");
+			buffer.push("."+ findMode + "('" + elementId + "').isSelected().then(function(selected){assert.equal(selected , " + parameters + ")}).end()");
 			break;
 
 		case "clearValue":
-			buffer.push(".findById('" + elementId + "').clearValue().end()");
+			buffer.push("."+ findMode + "('" + elementId + "').clearValue().end()");
 			break;
 
 		case "textEqualTo":
-			buffer.push(".findById('" + elementId + "').getVisibleText().then(function(text){assert.strictEqual(text, '" + parameters + "')}).end()");
+			buffer.push("."+ findMode + "('" + elementId + "').getVisibleText().then(function(text){assert.strictEqual(text, '" + parameters + "')}).end()");
 			break;
 
 		case "valueEqualTo":
-			buffer.push(".findById('" + elementId + "').getProperty('value').then(function(val){assert.equal(val, '" + parameters + "')}).end()");
+			buffer.push("."+ findMode + "('" + elementId + "').getProperty('value').then(function(val){assert.equal(val, '" + parameters + "')}).end()");
 			break;
 	}
 
