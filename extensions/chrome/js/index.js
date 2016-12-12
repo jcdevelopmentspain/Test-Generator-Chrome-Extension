@@ -168,11 +168,11 @@ function parseJSON() {
 	cleanActionsChoosed();
 }
 
-function buildCssRoute (cssObject){
+function buildCssRoute ( cssObject ){
 	return cssObject.className + "[" + cssObject.index +"]";
 }
 
-function selectIdFromContent(idElement) {
+function selectIdFromContent( idElement ) {
 
 	var content = find("content");
 	var frameContent = content.children[0];
@@ -180,7 +180,7 @@ function selectIdFromContent(idElement) {
 }
 
 
-function createAction(elementId, actionId, params) {
+function createAction( elementId , actionId , params ) {
 	var action = {
 
 		id: elementId,
@@ -235,7 +235,7 @@ function deleteAction() {
 }
 
 
-function deleteFromForm(formId, collection) {
+function deleteFromForm( formId , collection ) {
 
 	var form = find(formId);
 
@@ -395,31 +395,37 @@ function parseIntern() {
 	};
 
 	buffer.push(".end()")
-	createTestIntern(buffer);
+	createTestIntern( buffer );
 
 }
-function parseActionIntern(actionId, elementId, parameters, buffer) {
+function parseActionIntern( actionId , elementId , parameters , buffer ) {
 	
-	var cssAction = (elementId.indexOf ("[") && elementId.indexOf ("]")) != -1 ;
-	var findMode = cssAction ? "findByClassName" : "findById" ;
+	var actionCSS = (elementId.indexOf ("[") && elementId.indexOf ("]")) != -1 ;
 
+	buffer = actionCSS ? parseCSSAction( actionId , elementId , parameters , buffer ) :
+						 parseIdAction( actionId , elementId , parameters , buffer )  ;
 
-	switch (actionId) {
+	return buffer;
+}
+
+function parseIdAction( actionId , elementId , parameters , buffer ){
+		
+		switch ( actionId ) {
 
 		case "acceptAlert":
 			buffer.push(".acceptAlert().end()");
 			break;
 
 		case "equals":
-			buffer.push("."+ findMode + "('" + elementId + "').getVisibleText().equals('" + parameters + "').end()");
+			buffer.push(".findById('" + elementId + "').getVisibleText().equals('" + parameters + "').end()");
 			break;
 
 		case "type":
-			buffer.push("."+ findMode + "('" + elementId + "').type('" + parameters + "').end()");
+			buffer.push(".findById('" + elementId + "').type('" + parameters + "').end()");
 			break;
 
 		case "click":
-			buffer.push("."+ findMode + "('" + elementId + "').click().end()");
+			buffer.push(".findById('" + elementId + "').click().end()");
 			break;
 
 		case "alertTextEqualTo":
@@ -427,23 +433,75 @@ function parseActionIntern(actionId, elementId, parameters, buffer) {
 			break;
 
 		case "isEnabled":
-			buffer.push("."+ findMode + "('" + elementId + "').isEnabled().then(function(enable){assert.equal(enable , " + parameters + ")}).end()");
+			buffer.push(".findById('" + elementId + "').isEnabled().then(function(enable){assert.equal(enable , " + parameters + ")}).end()");
 			break;
 
 		case "isSelected":
-			buffer.push("."+ findMode + "('" + elementId + "').isSelected().then(function(selected){assert.equal(selected , " + parameters + ")}).end()");
+			buffer.push(".findById('" + elementId + "').isSelected().then(function(selected){assert.equal(selected , " + parameters + ")}).end()");
 			break;
 
 		case "clearValue":
-			buffer.push("."+ findMode + "('" + elementId + "').clearValue().end()");
+			buffer.push(".findById('" + elementId + "').clearValue().end()");
 			break;
 
 		case "textEqualTo":
-			buffer.push("."+ findMode + "('" + elementId + "').getVisibleText().then(function(text){assert.strictEqual(text, '" + parameters + "')}).end()");
+			buffer.push(".findById('" + elementId + "').getVisibleText().then(function(text){assert.strictEqual(text, '" + parameters + "')}).end()");
 			break;
 
 		case "valueEqualTo":
-			buffer.push("."+ findMode + "('" + elementId + "').getProperty('value').then(function(val){assert.equal(val, '" + parameters + "')}).end()");
+			buffer.push(".findById('" + elementId + "').getProperty('value').then(function(val){assert.equal(val, '" + parameters + "')}).end()");
+			break;
+	}
+	
+	return buffer;
+}
+
+function parseCSSAction( actionId , elementId , parameters , buffer ){
+		
+		var cssIndex = cssElementsMap.get(elementId).index;
+		var indexBracket = elementId.indexOf("[");
+		elementId = elementId.substring( 0 , indexBracket );
+
+		switch ( actionId ) {
+
+		case "acceptAlert":
+			buffer.push(".acceptAlert().end()");
+			break;
+
+		case "equals":		
+			buffer.push(".findAllByClassName('" + elementId + "').getVisibleText().then(function(texts){ assert.equals(texts["+ cssIndex + "]," + parameters + ")}).end()");
+			break;
+
+		case "type":
+			buffer.push(".findAllByClassName('" + elementId + "').then(function(elems){ elems[" + cssIndex +"].type('" + parameters + "') }).end()");			
+			break;
+
+		case "click":
+			buffer.push(".findAllByClassName('" + elementId + "').then(function(elems){ elems[" + cssIndex + "].click() }).end()");			
+			break;
+
+		case "alertTextEqualTo":
+			buffer.push(".getAlertText().then(function(text){assert.strictEqual(text,'" + parameters + "')}).end()");
+			break;
+
+		case "isEnabled":
+			buffer.push(".findAllByClassName('" + elementId + "').then(function (elems){ elems[" + cssIndex + "].isEnabled().then(function(enable){ assert.equal( enable , " + parameters + " )}) }).end()");						
+			break;
+
+		case "isSelected":
+			buffer.push(".findAllByClassName('" + elementId + "').then(function (elems){ elems[" + cssIndex + "].isSelected().then(function(selected){ assert.equal( selected , " + parameters + " )}) }).end()");									
+			break;
+
+		case "clearValue":
+			buffer.push(".findAllByClassName('" + elementId + "').then(function (elems){ elems[" + cssIndex + "].clearValue() }).end()");						
+			break;
+
+		case "textEqualTo":
+			buffer.push(".findAllByClassName('" + elementId + "').getVisibleText().then(function (texts){ assert.strictEqual(texts["+ cssIndex + "]," + parameters + ")}).end()");			
+			break;
+
+		case "valueEqualTo":
+			buffer.push(".findAllByClassName('" + elementId + "').getProperty('value').then(function (vals){ assert.equal(vals["+ cssIndex + "]," + parameters + ")}).end()");						
 			break;
 	}
 
@@ -453,7 +511,7 @@ function parseActionIntern(actionId, elementId, parameters, buffer) {
 function parseJasmine() {/*TODO*/ }
 function parseNightWatch() {/*TODO*/ }
 
-function createTestIntern(actions) {
+function createTestIntern( actions ) {
 
 	var theInternTemplate = {
 		pageURL: find("siteURL").children[0].innerHTML,
@@ -467,11 +525,11 @@ function createTestIntern(actions) {
 	find("codeContainer").value = "Your TEST is already DOWNLOADED !!";
 	find("codeContainer").className += "codeContainer form-control testText";
 	//The test is downloaded
-	downloadTest(internCode);
+	downloadTest( internCode );
 
 }
 
-function downloadTest(code) {
+function downloadTest( code ) {
 	var fileName = find("fileName").value;
 	fileName = fileName == "" ? "test" : fileName;
 	var beautyCode = js_beautify(code, { indent_size: 4 });
@@ -479,22 +537,22 @@ function downloadTest(code) {
 	saveAs(blob, fileName + ".js");
 }
 
-function selectOption(array, element) {
+function selectOption( array , element ) {
 	for (var i = array.length - 1; i >= 0; i--) {
 		var child = array[i];
 		child.selected = child.id === element ? true : false;
 	}
 }
-function find(id) {
+function find( id ) {
 	return document.getElementById(id);
 }
 
-function isNotUrl(msg) {
+function isNotUrl( msg ) {
 	//Check if msg is a cssMsgObject or if it's a normal id
 	result = typeof msg == "object" ? true : msg.indexOf("/") == -1;
 	return result;
 }
 
-function isObject(element) {
+function isObject( element ) {
 	return typeof element == "object";
 }
