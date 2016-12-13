@@ -497,11 +497,11 @@ function parseCSSAction( actionId , elementId , parameters , buffer ){
 			break;
 
 		case "textEqualTo":
-			buffer.push(".findAllByClassName('" + elementId + "').getVisibleText().then(function (texts){ assert.strictEqual(texts["+ cssIndex + "]," + parameters + ")}).end()");			
+			buffer.push(".findAllByClassName('" + elementId + "').getVisibleText().then(function (texts){ assert.strictEqual(texts["+ cssIndex + "],'" + parameters + "')}).end()");			
 			break;
 
 		case "valueEqualTo":
-			buffer.push(".findAllByClassName('" + elementId + "').getProperty('value').then(function (vals){ assert.equal(vals["+ cssIndex + "]," + parameters + ")}).end()");						
+			buffer.push(".findAllByClassName('" + elementId + "').getProperty('value').then(function (vals){ assert.equal(vals["+ cssIndex + "],'" + parameters + "')}).end()");						
 			break;
 	}
 
