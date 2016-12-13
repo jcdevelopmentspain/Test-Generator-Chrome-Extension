@@ -3,7 +3,7 @@
 
   "name": "Test Recorder | Nightwatch-Jasmine-Intern",
   "description": "Creates functional tests from your browser for Nightwatch Jasmine or Intern.",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "devtools_page": "devtools.html",
   "options_page": "index.html",
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",

@@ -9,7 +9,11 @@
     "grunt-contrib-jshint": "^1.0.0",
     "grunt-contrib-nodeunit": "^1.0.0",
     "grunt-contrib-uglify": "^1.0.0",
-    "intern": "^3.0.0"
+    "intern": "^3.0.0",
+    "jit-grunt": "^0.10.0"
   },
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "jit-grunt": "^0.10.0"
+  }
 }
